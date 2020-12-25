@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	smtpHost = "smtp.gmail.com"
+	smtpHost = "smtp.ionos.com"
 	smtpPort = "465"
 	subject  = "Contact - Website"
 )
@@ -18,7 +18,7 @@ const (
 var (
 	fromEmail = mail.Address{
 		Name:    "",
-		Address: "sandeepdelrio@gmail.com",
+		Address: "admin@tsksandeep.com",
 	}
 	toEmail = mail.Address{
 		Name:    "",
@@ -68,7 +68,7 @@ func SendEmail(body string) error {
 	message += "\r\n" + body
 
 	tlsconfig := &tls.Config{
-		InsecureSkipVerify: false,
+		InsecureSkipVerify: true,
 		ServerName:         smtpServer.host,
 	}
 
