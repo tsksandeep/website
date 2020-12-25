@@ -20,6 +20,7 @@ const (
 
 func getEmailPassword() (string, error) {
 	emailPassword := os.Getenv("EMAIL_PASSWORD")
+	log.Info(emailPassword)
 	emailPasswordBytes, err := b64.StdEncoding.DecodeString(emailPassword)
 	if err != nil {
 		return "", err
@@ -48,6 +49,8 @@ func SendEmail(message string) error {
 		log.Error(err)
 		return err
 	}
+
+	log.Info(emailPass)
 
 	// Settings for SMTP server
 	d := gomail.NewDialer(smtpServer, smtpPort, fromEmail, emailPass)
