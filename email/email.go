@@ -1,21 +1,22 @@
 package email
 
 import (
-	"crypto/tls"
 	b64 "encoding/base64"
+	"fmt"
+	"net/smtp"
 	"os"
-
-	log "github.com/sirupsen/logrus"
-	gomail "gopkg.in/mail.v2"
 )
 
 const (
-	smtpServer = "smtp.gmail.com"
-	smtpPort   = 587
+	smtpHost = "smtp.gmail.com"
+	smtpPort = "587"
 
 	fromEmail = "sandeepdelrio@gmail.com"
-	toEmail   = "tsksandeep11@gmail.com"
 	subject   = "Contact - Website"
+)
+
+var (
+	toEmail = []string{"tsksandeep11@gmail.com"}
 )
 
 func getEmailPassword() (string, error) {
@@ -27,35 +28,28 @@ func getEmailPassword() (string, error) {
 	return string(emailPasswordBytes), nil
 }
 
+type smtpServer struct {
+	host string
+	port string
+}
+
+// Address URI to smtp server
+func (s *smtpServer) Address() string {
+	return s.host + ":" + s.port
+}
+
 //SendEmail send email from sandeepdelrio@gmail.com to tsksandeep11@gmail.com
 func SendEmail(message string) error {
-	m := gomail.NewMessage()
+	smtpServer := smtpServer{host: smtpHost, port: smtpPort}
 
-	// Set E-Mail sender
-	m.SetHeader("From", fromEmail)
-
-	// Set E-Mail receivers
-	m.SetHeader("To", toEmail)
-
-	// Set E-Mail subject
-	m.SetHeader("Subject", subject)
-
-	// Set E-Mail body. You can set plain text or html with text/html
-	m.SetBody("text/plain", message)
-
-	emailPass, err := getEmailPassword()
+	password, err := getEmailPassword()
 	if err != nil {
-		log.Error(err)
 		return err
 	}
 
-	// Settings for SMTP server
-	d := gomail.NewDialer(smtpServer, smtpPort, fromEmail, emailPass)
+	msgByte := []byte(fmt.Sprintf("To: %s\r\nSubject: Contact - Website\r\n\r\n%s", toEmail[0], message))
 
-	// This is only needed when SSL/TLS certificate is not valid on server.
-	// In production this should be set to false.
-	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	auth := smtp.PlainAuth("", fromEmail, password, smtpServer.host)
 
-	// Now send E-Mail
-	return d.DialAndSend(m)
+	return smtp.SendMail(smtpServer.Address(), auth, fromEmail, toEmail, msgByte)
 }
