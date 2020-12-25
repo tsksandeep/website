@@ -20,6 +20,7 @@ func main() {
 	apiRouter := router.NewRouter()
 	apiRouter.AddRoutes()
 	port := ":" + os.Getenv("PORT")
+	log.Info(port)
 	server := http.Server{
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 5 * time.Minute,
