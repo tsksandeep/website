@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	log "github.com/sirupsen/logrus"
+	"github.com/website/handlers/contact"
 )
 
 const (
@@ -25,22 +26,22 @@ func (fs FileSystem) Open(path string) (http.File, error) {
 	f, err := fs.fs.Open(path)
 	if os.IsNotExist(err) {
 		if f, err = fs.fs.Open(index); err != nil {
-			log.Error(err.Error())
+			log.Error(err)
 			return nil, err
 		}
 	} else if err != nil {
-		log.Error(err.Error())
+		log.Error(err)
 		return nil, err
 	}
 
 	s, err := f.Stat()
 	if err != nil {
-		log.Error(err.Error())
+		log.Error(err)
 		return nil, err
 	}
 	if s.IsDir() {
 		if _, err = fs.fs.Open(index); err != nil {
-			log.Error(err.Error())
+			log.Error(err)
 			return nil, err
 		}
 	}
@@ -69,9 +70,11 @@ func NewRouter() *Router {
 
 //AddRoutes adds routes to the router
 func (router *Router) AddRoutes() {
+	contactHandler := contact.New()
+
 	router.Group(func(r chi.Router) {
 		//routes to qr handler
-		r.Get(apiVersion1+"/contact", qrHandler.GetQRCode)
+		r.Post(apiVersion1+"/contact", contactHandler.PostContact)
 
 		// paths that don't exist in the API server
 		r.HandleFunc("/api/*", func(w http.ResponseWriter, r *http.Request) {

@@ -3,8 +3,10 @@ package contact
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
+	"github.com/website/email"
 	"github.com/website/handlers"
 	"github.com/website/httputils"
 
@@ -19,12 +21,29 @@ func New() handlers.ContactHandler {
 }
 
 func (ch *contactHandler) PostContact(w http.ResponseWriter, r *http.Request) {
-	var contactInfo contact
+	var contactInfo Contact
 
 	err := json.NewDecoder(r.Body).Decode(&contactInfo)
 	if err != nil {
-		log.Error(err.Error())
+		log.Error(err)
 		handlers.WriteHandlerError(errors.New("no body parameter"), http.StatusBadRequest, httputils.BadRequest, w, r)
 		return
 	}
+
+	msgString := fmt.Sprintf("Name: %s \n Email: %s \n Message: %s", contactInfo.Name, contactInfo.Email, contactInfo.Message)
+
+	err = email.SendEmail(msgString)
+	if err != nil {
+		log.Error(err)
+		handlers.WriteHandlerError(errors.New("email could not be sent"), http.StatusInternalServerError, httputils.UnexpectedError, w, r)
+		return
+	}
+
+	err = httputils.WriteJson(200, nil, w)
+	if err != nil {
+		log.Error(err)
+		handlers.WriteHandlerError(err, http.StatusInternalServerError, httputils.UnexpectedError, w, r)
+	}
+
+	return
 }

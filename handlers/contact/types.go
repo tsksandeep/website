@@ -1,7 +1,7 @@
 package contact
 
-type contact struct {
-	name    string `json:"name"`
-	email   string `json:"email"`
-	message string `json:"message"`
+type Contact struct {
+	Name    string `json:"name"`
+	Email   string `json:"email"`
+	Message string `json:"message"`
 }

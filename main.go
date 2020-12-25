@@ -29,6 +29,6 @@ func main() {
 
 	log.Info(fmt.Sprintf("Listening on %s", port))
 	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		log.Fatal(err.Error())
+		log.Fatal(err)
 	}
 }
