@@ -68,7 +68,7 @@ func SendEmail(body string) error {
 	message += "\r\n" + body
 
 	tlsconfig := &tls.Config{
-		InsecureSkipVerify: true,
+		InsecureSkipVerify: false,
 		ServerName:         smtpServer.host,
 	}
 
