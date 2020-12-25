@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/website/router"
 
 	log "github.com/sirupsen/logrus"
 )
-
 
 func main() {
 	log.SetFormatter(&log.JSONFormatter{
@@ -19,7 +19,7 @@ func main() {
 
 	apiRouter := router.NewRouter()
 	apiRouter.AddRoutes()
-	port := ":8080"
+	port := ":" + os.Getenv("PORT")
 	server := http.Server{
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 5 * time.Minute,
