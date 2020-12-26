@@ -4,27 +4,43 @@ import (
 	"crypto/tls"
 	b64 "encoding/base64"
 	"fmt"
-	"net/mail"
 	"net/smtp"
 	"os"
 )
 
 const (
-	smtpHost = "smtp.ionos.com"
-	smtpPort = "465"
-	subject  = "Contact - Website"
+	smtpHost        = "smtp.ionos.com"
+	smtpPort        = "465"
+	fromEmail       = "admin@tsksandeep.com"
+	toEmailPersonal = "tsksandeep11@gmail.com"
+	subjectPersonal = "Contact - Website"
+	subjectClient   = "Thank you for contacting"
+	messageClient   = "Thank you for contacting me. I will get back to you as soon as possible. Please contact me in this number (+91 9442142327) if anything urgent.\nThanks,\nSandeep Kumar"
 )
 
-var (
-	fromEmail = mail.Address{
-		Name:    "",
-		Address: "admin@tsksandeep.com",
+func emailWriter(c *smtp.Client, fromEmail string, toEmail string, message string) error {
+	if err := c.Mail(fromEmail); err != nil {
+		return err
 	}
-	toEmail = mail.Address{
-		Name:    "",
-		Address: "tsksandeep11@gmail.com",
+
+	if err := c.Rcpt(toEmail); err != nil {
+		return err
 	}
-)
+
+	w, err := c.Data()
+	if err != nil {
+		return err
+	}
+
+	defer w.Close()
+
+	_, err = w.Write([]byte(message))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func getEmailPassword() (string, error) {
 	emailPassword := os.Getenv("EMAIL_PASSWORD")
@@ -35,37 +51,29 @@ func getEmailPassword() (string, error) {
 	return string(emailPasswordBytes), nil
 }
 
-type smtpServer struct {
-	host string
-	port string
+func getEmailMessage(fromEmail string, toEmail string, subject string, body string) string {
+	headers := make(map[string]string)
+	headers["From"] = fromEmail
+	headers["To"] = toEmail
+	headers["Subject"] = subject
+
+	message := ""
+	for k, v := range headers {
+		message += fmt.Sprintf("%s: %s\r\n", k, v)
+	}
+	message += "\r\n" + body
+
+	return message
 }
 
-// Address URI to smtp server
-func (s *smtpServer) Address() string {
-	return s.host + ":" + s.port
-}
-
-//SendEmail send email from sandeepdelrio@gmail.com to tsksandeep11@gmail.com
-func SendEmail(body string) error {
+//SendEmail sends email to the owner's account and the user's account
+func SendEmail(body Body) error {
 	smtpServer := smtpServer{host: smtpHost, port: smtpPort}
 
 	password, err := getEmailPassword()
 	if err != nil {
 		return err
 	}
-
-	// Setup headers
-	headers := make(map[string]string)
-	headers["From"] = fromEmail.String()
-	headers["To"] = toEmail.String()
-	headers["Subject"] = subject
-
-	// Setup message
-	message := ""
-	for k, v := range headers {
-		message += fmt.Sprintf("%s: %s\r\n", k, v)
-	}
-	message += "\r\n" + body
 
 	tlsconfig := &tls.Config{
 		InsecureSkipVerify: false,
@@ -82,39 +90,21 @@ func SendEmail(body string) error {
 		return err
 	}
 
-	auth := smtp.PlainAuth("", fromEmail.Address, password, smtpServer.host)
+	defer c.Quit()
+
+	auth := smtp.PlainAuth("", fromEmail, password, smtpServer.host)
 
 	if err = c.Auth(auth); err != nil {
 		return err
 	}
 
-	if err = c.Mail(fromEmail.Address); err != nil {
-		return err
-	}
+	// Send message to personal account
+	emailWriter(c, fromEmail, toEmailPersonal, getEmailMessage(fromEmail, toEmailPersonal, subjectPersonal, body.ToString()))
 
-	if err = c.Rcpt(toEmail.Address); err != nil {
-		return err
-	}
+	msgClient := fmt.Sprintf("Hi %s,\n%s", body.GetName(), messageClient)
 
-	w, err := c.Data()
-	if err != nil {
-		return err
-	}
-
-	_, err = w.Write([]byte(message))
-	if err != nil {
-		return err
-	}
-
-	err = w.Close()
-	if err != nil {
-		return err
-	}
-
-	err = c.Quit()
-	if err != nil {
-		return err
-	}
+	// Send message to client account
+	emailWriter(c, fromEmail, body.GetEmail(), getEmailMessage(fromEmail, body.GetEmail(), subjectClient, msgClient))
 
 	return nil
 }

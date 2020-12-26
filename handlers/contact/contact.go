@@ -3,7 +3,6 @@ package contact
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/website/email"
@@ -30,9 +29,7 @@ func (ch *contactHandler) PostContact(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	msgString := fmt.Sprintf("Name: %s \n Email: %s \n Message: %s", contactInfo.Name, contactInfo.Email, contactInfo.Message)
-
-	err = email.SendEmail(msgString)
+	err = email.SendEmail(&contactInfo)
 	if err != nil {
 		log.Error(err)
 		handlers.WriteHandlerError(errors.New("email could not be sent"), http.StatusInternalServerError, httputils.UnexpectedError, w, r)
