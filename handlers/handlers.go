@@ -15,3 +15,7 @@ func WriteHandlerError(err error, httpErrorCode int, subErrorCode httputils.Erro
 type ContactHandler interface {
 	PostContact(w http.ResponseWriter, r *http.Request)
 }
+
+type DownloadHandler interface {
+	GetResume(w http.ResponseWriter, r *http.Request)
+}

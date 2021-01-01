@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/cors"
 	log "github.com/sirupsen/logrus"
 	"github.com/website/handlers/contact"
+	"github.com/website/handlers/download"
 )
 
 const (
@@ -71,10 +72,14 @@ func NewRouter() *Router {
 //AddRoutes adds routes to the router
 func (router *Router) AddRoutes() {
 	contactHandler := contact.New()
+	downloadHanlder := download.New()
 
 	router.Group(func(r chi.Router) {
-		//routes to qr handler
+		//routes to contact handler
 		r.Post(apiVersion1+"/contact", contactHandler.PostContact)
+
+		//routes to download handler
+		r.Get(apiVersion1+"/download/resume", downloadHanlder.GetResume)
 
 		// paths that don't exist in the API server
 		r.HandleFunc("/api/*", func(w http.ResponseWriter, r *http.Request) {
