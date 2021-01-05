@@ -7,8 +7,10 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	log "github.com/sirupsen/logrus"
+
 	"github.com/website/handlers/contact"
 	"github.com/website/handlers/download"
+	"github.com/website/handlers/user"
 )
 
 const (
@@ -73,10 +75,14 @@ func NewRouter() *Router {
 func (router *Router) AddRoutes() {
 	contactHandler := contact.New()
 	downloadHanlder := download.New()
+	userHandler := user.New()
 
 	router.Group(func(r chi.Router) {
 		//routes to contact handler
 		r.Post(apiVersion1+"/contact", contactHandler.PostContact)
+
+		//routes to user handler
+		r.Post(apiVersion1+"/user-details", userHandler.PostUserDetails)
 
 		//routes to download handler
 		r.Get(apiVersion1+"/download/resume", downloadHanlder.GetResume)

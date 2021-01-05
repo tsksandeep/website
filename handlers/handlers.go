@@ -19,3 +19,6 @@ type ContactHandler interface {
 type DownloadHandler interface {
 	GetResume(w http.ResponseWriter, r *http.Request)
 }
+type UserHandler interface {
+	PostUserDetails(w http.ResponseWriter, r *http.Request)
+}
