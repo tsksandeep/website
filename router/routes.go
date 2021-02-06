@@ -93,6 +93,11 @@ func (router *Router) AddRoutes() {
 			w.Write([]byte("Resource not available"))
 			return
 		})
+
+		r.HandleFunc("/googlefb60a2c818affcda.html", func(w http.ResponseWriter, r *http.Request) {
+			http.ServeFile(w, r, "static/googlefb60a2c818affcda.html")
+			return
+		})
 	})
 	// set up static file serving
 	fs := http.FileServer(FileSystem{
