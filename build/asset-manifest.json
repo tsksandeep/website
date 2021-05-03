@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/static/css/main.9399ebde.chunk.css",
-    "main.js": "/static/js/main.685bffec.chunk.js",
-    "main.js.map": "/static/js/main.685bffec.chunk.js.map",
+    "main.css": "/static/css/main.db78c7db.chunk.css",
+    "main.js": "/static/js/main.0034b6db.chunk.js",
+    "main.js.map": "/static/js/main.0034b6db.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.fa961822.js",
     "runtime-main.js.map": "/static/js/runtime-main.fa961822.js.map",
     "static/js/2.be8cc2d3.chunk.js": "/static/js/2.be8cc2d3.chunk.js",
     "static/js/2.be8cc2d3.chunk.js.map": "/static/js/2.be8cc2d3.chunk.js.map",
     "index.html": "/index.html",
-    "static/css/main.9399ebde.chunk.css.map": "/static/css/main.9399ebde.chunk.css.map",
+    "static/css/main.db78c7db.chunk.css.map": "/static/css/main.db78c7db.chunk.css.map",
     "static/js/2.be8cc2d3.chunk.js.LICENSE.txt": "/static/js/2.be8cc2d3.chunk.js.LICENSE.txt",
     "static/media/App.css": "/static/media/Roboto-Regular.03523cf5.ttf",
     "static/media/avatar.9421416d.jpg": "/static/media/avatar.9421416d.jpg",
@@ -21,7 +21,7 @@
   "entrypoints": [
     "static/js/runtime-main.fa961822.js",
     "static/js/2.be8cc2d3.chunk.js",
-    "static/css/main.9399ebde.chunk.css",
-    "static/js/main.685bffec.chunk.js"
+    "static/css/main.db78c7db.chunk.css",
+    "static/js/main.0034b6db.chunk.js"
   ]
 }
